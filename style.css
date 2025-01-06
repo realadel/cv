@@ -15,7 +15,7 @@ body {
 }
 
 .bg-gradient {
-    background-image: linear-gradient(to right top, #d16ba5, #c373b5, #b37cc3, #a084cc, #8c8cd2, #7694d8, #5f9bdb, #46a2da, #07abd8, #00b2d0, #00b9c3, #00beb2);
+    background-image: linear-gradient(to bottom, #d16ba5, #c373b5, #b37cc3, #a084cc, #8c8cd2, #7694d8, #5f9bdb, #46a2da, #07abd8, #00b2d0, #00b9c3, #00beb2);
 }
 
 .bg-glass {
