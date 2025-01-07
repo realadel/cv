@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="format-detection" content="telephone=no">
-    <meta name="theme-color" content="#d17aad">
+    <meta name="theme-color" id="statusBarColor" content="#d17aad">
     <title>Adel Alanazi</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -174,5 +174,38 @@
             </section>
         </section>
     </main>
+
+    <script>
+        // تحديث لون شريط الحالة بناءً على التمرير
+        function updateStatusBarColor() {
+            const gradientColors = [
+                "#d16ba5", "#c373b5", "#b37cc3", "#a084cc",
+                "#8c8cd2", "#7694d8", "#5f9bdb", "#46a2da",
+                "#07abd8", "#00b2d0", "#00b9c3", "#00beb2"
+            ];
+
+            const scrollY = window.scrollY;
+            const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercentage = scrollY / documentHeight;
+
+            // تحديد اللون بناءً على النسبة
+            const colorIndex = Math.min(
+                gradientColors.length - 1,
+                Math.floor(scrollPercentage * gradientColors.length)
+            );
+
+            // تحديث الـ meta الخاص بشريط الحالة
+            const statusBarMeta = document.getElementById('statusBarColor');
+            if (statusBarMeta) {
+                statusBarMeta.setAttribute('content', gradientColors[colorIndex]);
+            }
+        }
+
+        // الاستماع للأحداث
+        window.addEventListener('scroll', updateStatusBarColor);
+        window.addEventListener('load', updateStatusBarColor);
+    </script>
+
+
 </body>
 </html>
