@@ -200,6 +200,10 @@ body {
     text-align: center;
 }
 
+.text-end {
+    text-align: end;
+}
+
 .no-text-center {
     text-align: left;
 }
