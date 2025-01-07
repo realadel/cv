@@ -176,36 +176,79 @@
     </main>
 
     <script>
-        // تحديث لون شريط الحالة بناءً على التمرير
-        function updateStatusBarColor() {
-            const gradientColors = [
-                "#d16ba5", "#c373b5", "#b37cc3", "#a084cc",
-                "#8c8cd2", "#7694d8", "#5f9bdb", "#46a2da",
-                "#07abd8", "#00b2d0", "#00b9c3", "#00beb2"
-            ];
+        // قائمة الألوان في الخلفية المتدرجة (تم تقليل الألوان الأخيرة للتخفيف من المشكلة)
+        const gradientColors = [
+            "#d16ba5", "#c373b5", "#b37cc3", "#a084cc",
+            "#8c8cd2", "#7694d8", "#5f9bdb", "#46a2da",
+            "#5fa6c9", "#4e9cb3" // ألوان محسنة للتدرج النهائي
+        ];
 
-            const scrollY = window.scrollY;
-            const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollPercentage = scrollY / documentHeight;
+        // دالة لتحويل HEX إلى RGB
+        function hexToRgb(hex) {
+            const bigint = parseInt(hex.slice(1), 16);
+            return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
+        }
 
-            // تحديد اللون بناءً على النسبة
-            const colorIndex = Math.min(
-                gradientColors.length - 1,
-                Math.floor(scrollPercentage * gradientColors.length)
+        // دالة لتحويل RGB إلى HEX
+        function rgbToHex(r, g, b) {
+            return (
+                "#" +
+                [r, g, b]
+                    .map((x) => x.toString(16).padStart(2, "0"))
+                    .join("")
+            );
+        }
+
+        // دالة لتداخل الألوان (interpolation)
+        function interpolateColor(color1, color2, factor) {
+            const rgb1 = hexToRgb(color1);
+            const rgb2 = hexToRgb(color2);
+
+            const interpolated = rgb1.map((c, i) =>
+                Math.round(c + factor * (rgb2[i] - c))
             );
 
-            // تحديث الـ meta الخاص بشريط الحالة
-            const statusBarMeta = document.getElementById('statusBarColor');
+            return rgbToHex(interpolated[0], interpolated[1], interpolated[2]);
+        }
+
+        // دالة تحديث شريط الحالة بناءً على نسبة التمرير
+        function updateStatusBarColor() {
+            const scrollY = window.scrollY; // مقدار التمرير
+            const viewportHeight = window.innerHeight; // ارتفاع النافذة
+            const documentHeight = document.documentElement.scrollHeight; // ارتفاع الصفحة بالكامل
+
+            // حساب نسبة التمرير
+            const scrollPercentage = scrollY / (documentHeight - viewportHeight);
+
+            // تقليل تأثير الألوان عند النهاية
+            const adjustedPercentage = Math.min(scrollPercentage, 0.85); // نوقف التأثير عند 85%
+
+            // حساب الموقع في التدرج
+            const segment = adjustedPercentage * (gradientColors.length - 1);
+            const index = Math.floor(segment); // اللون الأساسي
+            const factor = segment - index; // النسبة الجزئية بين اللونين
+
+            // اختيار اللون الحالي بدقة
+            const color =
+                index < gradientColors.length - 1
+                    ? interpolateColor(
+                        gradientColors[index],
+                        gradientColors[index + 1],
+                        factor
+                    )
+                    : gradientColors[gradientColors.length - 1];
+
+            // تحديث شريط الحالة
+            const statusBarMeta = document.getElementById("statusBarColor");
             if (statusBarMeta) {
-                statusBarMeta.setAttribute('content', gradientColors[colorIndex]);
+                statusBarMeta.setAttribute("content", color);
             }
         }
 
-        // الاستماع للأحداث
-        window.addEventListener('scroll', updateStatusBarColor);
-        window.addEventListener('load', updateStatusBarColor);
+        // تشغيل الدالة عند تحميل الصفحة وأثناء التمرير
+        window.addEventListener("scroll", updateStatusBarColor);
+        window.addEventListener("load", updateStatusBarColor);
     </script>
-
 
 </body>
 </html>
