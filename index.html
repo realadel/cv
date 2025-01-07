@@ -176,7 +176,6 @@
     </main>
 
     <script>
-        // قائمة الألوان المحسنة (تم تقليل تأثير الدرجة الأخيرة بلطف)
         const gradientColors = [
             "#d16ba5", "#ca72b0", "#c373b5", "#bc74bc", "#b37cc3",
             "#ac80c8", "#a484cc", "#9c88cf", "#948cd2", "#8c8cd2",
@@ -185,13 +184,11 @@
             "#57b1eb", "#51a7dd", "#5fade1","#4c9ed8"
         ];
 
-        // دالة لتحويل HEX إلى RGB
         function hexToRgb(hex) {
             const bigint = parseInt(hex.slice(1), 16);
             return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
         }
 
-        // دالة لتحويل RGB إلى HEX
         function rgbToHex(r, g, b) {
             return (
                 "#" +
@@ -201,7 +198,6 @@
             );
         }
 
-        // دالة لتداخل الألوان (interpolation)
         function interpolateColor(color1, color2, factor) {
             const rgb1 = hexToRgb(color1);
             const rgb2 = hexToRgb(color2);
@@ -213,24 +209,19 @@
             return rgbToHex(interpolated[0], interpolated[1], interpolated[2]);
         }
 
-        // دالة تحديث شريط الحالة بناءً على نسبة التمرير
         function updateStatusBarColor() {
-            const scrollY = window.scrollY; // مقدار التمرير
-            const viewportHeight = window.innerHeight; // ارتفاع النافذة
-            const documentHeight = document.documentElement.scrollHeight; // ارتفاع الصفحة بالكامل
+            const scrollY = window.scrollY;
+            const viewportHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
 
-            // حساب نسبة التمرير
             const scrollPercentage = scrollY / (documentHeight - viewportHeight);
 
-            // تقليل تأثير الألوان عند النهاية
-            const adjustedPercentage = Math.min(scrollPercentage, 0.85); // نوقف التأثير عند 85%
+            const adjustedPercentage = Math.min(scrollPercentage, 0.85);
 
-            // حساب الموقع في التدرج
             const segment = adjustedPercentage * (gradientColors.length - 1);
-            const index = Math.floor(segment); // اللون الأساسي
-            const factor = segment - index; // النسبة الجزئية بين اللونين
+            const index = Math.floor(segment);
+            const factor = segment - index;
 
-            // اختيار اللون الحالي بدقة
             const color =
                 index < gradientColors.length - 1
                     ? interpolateColor(
@@ -240,14 +231,12 @@
                     )
                     : gradientColors[gradientColors.length - 1];
 
-            // تحديث شريط الحالة
             const statusBarMeta = document.getElementById("statusBarColor");
             if (statusBarMeta) {
                 statusBarMeta.setAttribute("content", color);
             }
         }
 
-        // تشغيل الدالة عند تحميل الصفحة وأثناء التمرير
         window.addEventListener("scroll", updateStatusBarColor);
         window.addEventListener("load", updateStatusBarColor);
     </script>
